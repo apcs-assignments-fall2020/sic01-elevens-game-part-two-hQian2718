@@ -25,12 +25,12 @@ public class ElevensBoard extends Board {
     /**
      * The values of the cards for this game to be sent to the deck.
      */
-    private static final int[] POINT_VALUES = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 0, 0, 0 };
+    private static final int[] POINT_VALUES = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, -1, -2, -3 };
 
     /**
      * Flag used to control debugging print statements.
      */
-    private static final boolean I_AM_DEBUGGING = false;
+    private static final boolean I_AM_DEBUGGING = true;
 
     /**
      * Creates a new <code>ElevensBoard</code> instance.
@@ -52,6 +52,11 @@ public class ElevensBoard extends Board {
     @Override
     public boolean isLegal(List<Integer> selectedCards) {
         // YOUR CODE HERE
+        if(selectedCards.size() == 2){
+          return containsPairSum11(selectedCards);
+        }else if(selectedCards.size() == 3){
+          return containsJQK(selectedCards);
+        }
         return false;
     }
 
@@ -70,7 +75,7 @@ public class ElevensBoard extends Board {
         List<Integer> selectedCards = cardIndexes();
 
         // YOUR CODE HERE
-        return true;
+        return (containsPairSum11(selectedCards) || containsJQK(selectedCards));
     }
 
     /**
@@ -82,7 +87,19 @@ public class ElevensBoard extends Board {
      *         otherwise.
      */
     private boolean containsPairSum11(List<Integer> selectedCards) {
-        // YOUR CODE HERE
+        int sum;
+        int[] values = new int[9];
+        for(int i = 0; i < selectedCards.size(); i ++){
+          values[i] = cardAt(selectedCards.get(i)).getPointValue();
+        }
+
+        for(int i = 0; i < selectedCards.size() - 1; i ++){
+          for(int j = 1; j < selectedCards.size(); j ++){
+            sum = values[i] + values[j];
+            if(sum == 11) return true;
+          }
+        }
+
         return false;
     }
 
@@ -95,7 +112,21 @@ public class ElevensBoard extends Board {
      *         and a king; false otherwise.
      */
     private boolean containsJQK(List<Integer> selectedCards) {
-        // YOUR CODE HERE
+        if(selectedCards.size() < 3) return false;
+
+        int[] values = new int[9];
+        for(int i = 0; i < selectedCards.size(); i ++){
+          values[i] = cardAt(selectedCards.get(i)).getPointValue();
+        }
+        int c;
+        for(int i = 0; i < selectedCards.size() - 2; i ++){
+          for(int j = 1; j < selectedCards.size() - 1; j ++){
+            for(int k = 2; k < selectedCards.size(); k ++){
+              c = values[i] + values[j] + values[k];
+              if(c == -6) return true;
+            }
+          }
+        }
         return false;
     }
 }
